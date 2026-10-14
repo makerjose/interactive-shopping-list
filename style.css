@@ -1,0 +1,95 @@
+
+body {
+  font-family: Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: aliceblue;
+}
+
+/* Main Content */
+.container {
+  padding: 2%;
+  min-height: 90vh;
+  max-width: 800px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Form Container */
+.form-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+#shopping-list-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#shopping-list-form input[type="submit"] {
+  background-color: #1dada3;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Shopping Cart */
+.list-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+
+/* Purchased Items */
+.cart-item.purchased {
+  border-color: #3cd462;
+}
+
+/* Strike through purchased items  */
+.cart-item.purchased .item-name,
+.cart-item.purchased .item-price {
+  text-decoration: line-through;
+  color: #777;
+}
+
+/* Total purchased*/
+#total {
+  margin-top: 20px;
+}
+
+/* Clear Button */
+#clear-list {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#clear-list:hover {
+  background-color: #b02a37;
+}
+

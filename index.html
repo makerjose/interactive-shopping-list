@@ -1,0 +1,55 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="main.js"></script>
+    <title>Shopping Cart</title>
+  </head>
+  <body>
+    <main class="container">
+      <div class="header">
+        <h2>Interactive Shopping List</h2>
+      </div>
+
+      <!-- Form Container -->
+      <div class="form-container">
+        <h4>Add Items to Cart</h4>
+        <form id="shopping-list-form">
+          <label for="name-input">Name:</label>
+          <input
+            type="text"
+            id="name-input"
+            name="name"
+            required
+          />
+
+          <label for="price-input">Price:</label>
+          <input
+            type="number"
+            id="price-input"
+            name="price"
+            min="0"
+            step="0.01"
+            required
+          />
+          <input type="submit" value="Add Item" />
+        </form>
+      </div>
+
+      <!-- List Container -->
+      <div class="list-container">
+        <h4 id="cart-title">Cart Items</h4>
+        <ul class="list" id="cart"></ul>
+        <h4 id="total">
+          Purchased Total: KES 0.00
+        </h4>
+        <button type="button" id="clear-list">
+          Clear List
+        </button>
+      </div>
+    </main>
+  </body>
+</html>
