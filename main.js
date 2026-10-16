@@ -1,4 +1,5 @@
-const shoppingList = [
+
+const shoppingList = JSON.parse(localStorage.getItem("shoppingList")) || [
   { name: "Eggs", price: 40, purchased: false },
   { name: "Milk", price: 80, purchased: false }
 ];
@@ -8,118 +9,122 @@ const form = document.querySelector("#shopping-list-form");
 const totalElement = document.querySelector("#total");
 const clearButton = document.querySelector("#clear-list");
 
-// Display an item in the shopping cart
-function displayCartItem(item) {
+// Save shopping list to local storage
+function saveList() {
+  localStorage.setItem("shoppingList", JSON.stringify(shoppingList));
+}
 
-  const newItem = document.createElement("li"); // create new list inside the ul element
-  newItem.classList.add("cart-item");  // class name for styling
+// Display all shopping list items
+function renderList() {
+  shoppingCart.innerHTML = "";
 
-  // Item Name
-  const itemName = document.createElement("p");
-  itemName.classList.add("item-name");   // class name for styling
-  itemName.textContent = item.name;
+  shoppingList.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.classList.add("cart-item");
 
-  // Item Price
-  const itemPrice = document.createElement("p");
-  itemPrice.classList.add("item-price");   // class name for styling
-  itemPrice.textContent = "KES " + item.price
+    if (item.purchased) {
+      li.classList.add("purchased");
+    }
 
-  // Checkbox
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.classList.add("purchase-checkbox");
-  checkbox.checked = item.purchased;
+    li.innerHTML = `
+      <p class="item-name">${item.name}</p>
+      <p class="item-price">KES ${item.price}</p>
 
-  // Checkbox Label
-  const checkboxLabel = document.createElement("label");
-  checkboxLabel.classList.add("purchase-label");
+      <label class="purchase-label">
+        <input type="checkbox"
+          class="purchase-checkbox"
+          data-index="${index}"
+          ${item.purchased ? "checked" : ""}>
+        Mark Purchased
+      </label>
 
-  checkboxLabel.append(checkbox, "Mark Purchased");
+      <button class="edit-btn" data-index="${index}">
+        Edit
+      </button>
+    `;
 
-  // Add elements to list item
-  newItem.append(itemName, itemPrice, checkboxLabel);
+    shoppingCart.append(li);
+  });
 
-  // Add item to shopping cart
-  shoppingCart.append(newItem);
-
-  // Apply purchased styling if already purchased
-  if (item.purchased) {
-    newItem.classList.add("purchased");
-  }
+  updateTotal();
 }
 
 // Calculate total cost of purchased items
 function updateTotal() {
-
   const total = shoppingList.reduce((sum, item) => {
-    if (item.purchased) {
-      return sum + item.price;
-    }
-
-    return sum;
+    return item.purchased ? sum + item.price : sum;
   }, 0);
 
   totalElement.textContent =
     "Purchased Total: KES " + total.toFixed(2);
 }
 
-// Display initial shopping list
-shoppingList.forEach(item => {
-  displayCartItem(item);
-});
-
-// Handle adding new items
-function handleSubmit(event) {
+// Add new item
+form.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  const newName = form.elements["name"].value.trim();
-  const newPrice = Number(form.elements["price"].value);
+  const name = form.elements["name"].value.trim();
+  const price = Number(form.elements["price"].value);
 
-  const newItem = {
-    name: newName,
-    price: newPrice,
-    purchased: false // false by default and updated to true once marked
-  };
+  if (!name || !Number.isFinite(price) || price < 0) return;
 
-  shoppingList.push(newItem);
-  displayCartItem(newItem);
+  shoppingList.push({
+    name: name,
+    price: price,
+    purchased: false
+  });
 
+  saveList();
+  renderList();
   form.reset();
-}
+});
 
-// Add Item Event Listener
-form.addEventListener("submit", handleSubmit);
-
-// Mark Purchased Event Listener
+// Mark an item as purchased
 shoppingCart.addEventListener("change", (event) => {
+  if (event.target.classList.contains("purchase-checkbox")) {
+    const index = Number(event.target.dataset.index);
 
-  if (!event.target.classList.contains("purchase-checkbox")) {
-    return;
+    shoppingList[index].purchased = event.target.checked;
+
+    saveList();
+    renderList();
   }
-
-  const checkbox = event.target;
-  const listItem = checkbox.closest(".cart-item");
-
-  // Find the index of the selected list item
-  const index = Array.from(shoppingCart.children).indexOf(listItem);
-
-  // Update the array
-  shoppingList[index].purchased = checkbox.checked;
-
-  // Update visual appearance
-  listItem.classList.toggle("purchased", checkbox.checked);
-
-  // Recalculate total
-  updateTotal();
 });
 
-// Clear List Event Listener
+// Edit an existing item
+shoppingCart.addEventListener("click", (event) => {
+  if (event.target.classList.contains("edit-btn")) {
+    const index = Number(event.target.dataset.index);
+    const item = shoppingList[index];
+
+    const newName = prompt("Edit item name:", item.name);
+    if (newName === null || !newName.trim()) return;
+
+    const newPrice = prompt("Edit item price:", item.price);
+    if (newPrice === null || newPrice.trim() === "") return;
+
+    const price = Number(newPrice);
+
+    if (!Number.isFinite(price) || price < 0) {
+      alert("Please enter a valid price.");
+      return;
+    }
+
+    item.name = newName.trim();
+    item.price = price;
+
+    saveList();
+    renderList();
+  }
+});
+
+// Clear shopping list
 clearButton.addEventListener("click", () => {
-  shoppingList.length = 0; // empty the sshopping list array
-  shoppingCart.innerHTML = ""; // remove list items from the DOM
+  shoppingList.length = 0;
 
-  updateTotal(); // reset purchased total
+  saveList();
+  renderList();
 });
 
-// Initialize total
-updateTotal();
+// Display list when page loads
+renderList();
