@@ -1,8 +1,5 @@
 
-const shoppingList = JSON.parse(localStorage.getItem("shoppingList")) || [
-  { name: "Eggs", price: 40, purchased: false },
-  { name: "Milk", price: 80, purchased: false }
-];
+const shoppingList = JSON.parse(localStorage.getItem("shoppingList")) || [];
 
 const shoppingCart = document.querySelector("#cart");
 const form = document.querySelector("#shopping-list-form");
